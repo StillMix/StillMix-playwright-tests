@@ -1,13 +1,17 @@
 const { test, expect } = require('@playwright/test');
 
 test.describe('Проверка ПК версии (1280px)', () => {
+
+
     test.beforeEach(async ({ page }) => {
-        await page.goto('https://polis812.github.io/vacuu/');
+        const response = await page.goto('https://polis812.github.io/vacuu/');
+        expect(response.status()).toBe(200);
         await page.setViewportSize({ width: 1280, height: 800 });
     });
 
 
     test('Проверка ссылки "Blog"', async ({ page }) => {
+        await page.waitForSelector('.main a:has-text("Blog")');
         const blogLink = await page.locator('.main a:has-text("Blog")');
         await expect(blogLink).toHaveAttribute('href', 'https://polis812.github.io/blog');
     });
@@ -25,7 +29,7 @@ test.describe('Проверка ПК версии (1280px)', () => {
 
         const reviewsCount = await reviewsList.locator('.review').count();
 
-        if (reviewsCount > 3) { 
+        if (reviewsCount > 3) {
             await expect(arrowsLeft).not.toHaveClass(/arrow-disabled/);
             await expect(arrowsRight).not.toHaveClass(/arrow-disabled/);
         } else {
@@ -40,8 +44,8 @@ test.describe('Проверка ПК версии (1280px)', () => {
     });
 
     test('Проверка ссылки логотипа', async ({ page }) => {
-        const logoLink = await page.locator('.logo');
-        await expect(logoLink).toHaveAttribute('href', 'https://polis812.github.io/vacuu/');
+        const logoLink = await page.locator('.logo').first();
+        await expect(logoLink).toHaveAttribute('href', 'https://polis812.github.io/vacuu/');        
     });
 
     test('Проверка ссылки "Terms"', async ({ page }) => {
@@ -52,7 +56,8 @@ test.describe('Проверка ПК версии (1280px)', () => {
 
 test.describe('Проверка мобильной версии (320px)', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('https://polis812.github.io/vacuu/');
+        const response = await page.goto('https://polis812.github.io/vacuu/');
+        expect(response.status()).toBe(200);
         await page.setViewportSize({ width: 320, height: 800 });
     });
 
@@ -62,7 +67,7 @@ test.describe('Проверка мобильной версии (320px)', () => 
 
         for (let i = 0; i < insuranceCount; i++) {
             const width = await insuranceBlocks.nth(i).evaluate(el => el.offsetWidth);
-            expect(width).toBe(320); 
+            expect(width).toBe(320);
         }
     });
 
